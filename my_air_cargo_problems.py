@@ -193,7 +193,22 @@ class AirCargoProblem(Problem):
         :return: resulting state after action
         """
         # TODO implement
+        list_action = self.actions(state) 
+        found = False
+        # check if action belongs to the list 
+        for act in list_action:
+            if (act.name == action.name):
+                found = True
+        
+        if not found:
+            raise Exception
         new_state = FluentState([], [])
+        curr_state = decode_state(state, self.state_map)
+        # remove action that result from apply the action
+        new_state.pos = [pos for pos in curr_state.pos if not (pos in action.effect_rem)]
+        new_state.pos += action.effect_add
+        
+        print("new encode state : ",encode_state(new_state, self.state_map))
         return encode_state(new_state, self.state_map)
 
     def goal_test(self, state: str) -> bool:
@@ -265,7 +280,8 @@ def air_cargo_p1() -> AirCargoProblem:
 
 def air_cargo_p2() -> AirCargoProblem:
     # TODO implement Problem 2 definition
-    pass
+    cargos = ['C1', 'C2', 'C3']
+    planes = ['P1', 'P2', 'P3']
 
 
 def air_cargo_p3() -> AirCargoProblem:
