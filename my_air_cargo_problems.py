@@ -60,6 +60,29 @@ class AirCargoProblem(Problem):
             :return: list of Action objects
             """
             loads = []
+            for cargo in self.cargos:
+                for plane in self.planes:
+                    for airport in self.airports:
+                        precond_pos = [
+                                        # cargo need to be at the airport 
+                                        expr("At({},{})".format(cargo,airport)),
+                                        # plane need to be at the airport
+                                        expr("At({},{})".format(plane,airport)),
+                                      ]
+                        precond_neg = []
+                        effect_add = [
+                                        # cargo now on the plane 
+                                        expr("In({},{})".format(cargo,plane))
+
+                                     ]
+                        effect_rem = [
+                                        expr("At({},{})".format(cargo,airport))
+                                     ]
+                        load = Action(expr("Load({},{},{})".format(cargo,plane,airport)),
+                                      [precond_pos, precond_neg],
+                                      [effect_add, effect_rem])
+                        loads.append(load)
+
             # TODO create all load ground actions from the domain Load action
             return loads
 
@@ -68,8 +91,32 @@ class AirCargoProblem(Problem):
 
             :return: list of Action objects
             """
-            unloads = []
             # TODO create all Unload ground actions from the domain Unload action
+            unloads = []
+            for cargo in self.cargos:
+                for plane in self.planes:
+                    for airport in self.airports:
+                        precond_pos = [
+                                        # cargo need to be in plane
+                                        expr("In({},{})".format(cargo,plane)),
+                                        # plane need to be at the airport
+                                        expr("At({},{})".format(plane,airport)),
+                                      ]
+                        precond_neg = []
+                        effect_add = [
+                                        # cargo now on unload at the airport 
+                                        expr("At({},{})".format(cargo,airport))
+
+                                     ]
+                        effect_rem = [
+                                        expr("In({},{})".format(cargo,plane))
+                                     ]
+                        unload = Action(expr("Unload({},{},{})".format(cargo,plane,airport)),
+                                      [precond_pos, precond_neg],
+                                      [effect_add, effect_rem])
+                        unloads.append(unload)
+            
+            
             return unloads
 
         def fly_actions():

@@ -17,6 +17,8 @@ class TestAirCargoProb1(unittest.TestCase):
         self.p1 = air_cargo_p1()
 
     def test_ACP1_num_fluents(self):
+        print("p1 initial state len: ",len(self.p1.initial))
+        print("p1 initial : ",self.p1.initial)
         self.assertEqual(len(self.p1.initial), 12)
 
     def test_ACP1_num_requirements(self):
