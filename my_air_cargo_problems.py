@@ -151,7 +151,36 @@ class AirCargoProblem(Problem):
         :return: list of Action objects
         """
         # TODO implement
+
+        # action can only be satisfied if environment statisfy the preconditions
         possible_actions = []
+        fluent_state = decode_state(state, self.state_map)
+        print("pos state ",fluent_state.pos)
+        print("neg state ",fluent_state.neg)
+        for action in self.actions_list:
+            # check for pos condition
+            met_cond = True
+            print("action ", action.name, action.args, " : ", action.precond_pos, action.precond_neg)
+            for pos_cond in action.precond_pos:
+                if not (pos_cond in fluent_state.pos):
+                    print("fail pos cond ", pos_cond)
+                    met_cond = False
+                    break
+            # fail condition then move to next action 
+            if not met_cond:
+                continue
+
+            # check for neg
+            for neg_cond in action.precond_neg:
+                if not (neg_cond in fluent_state.neg):
+                    print("fail neg cond ", neg_cond)
+                    met_cond = False
+                    break
+            # add to list if condition is met
+            if met_cond:
+                possible_actions.append(action)
+
+        print("possible actions ",possible_actions)
         return possible_actions
 
     def result(self, state: str, action: Action):
