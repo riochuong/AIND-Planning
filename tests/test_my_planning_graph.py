@@ -16,6 +16,10 @@ class TestPlanningGraphLevels(unittest.TestCase):
     def setUp(self):
         self.p = have_cake()
         self.pg = PlanningGraph(self.p, self.p.initial)
+        print("Setup is good!")
+        #print(self.pg.initial)
+        # print("\n")
+        # print(self.pg.fs.neg)
 
     def test_add_action_level(self):
         # for level, nodeset in enumerate(self.pg.a_levels):
