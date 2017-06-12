@@ -88,6 +88,7 @@ class TestPlanningGraphMutex(unittest.TestCase):
         self.assertFalse(PlanningGraph.competing_needs_mutex(self.pg, self.na1, self.na2),
                          "Non-competing action nodes incorrectly marked as mutex")
         mutexify(self.ns3, self.ns4)
+        print("test 2 competing mutex")
         self.assertTrue(PlanningGraph.competing_needs_mutex(self.pg, self.na1, self.na2),
                         "Opposite preconditions from two action nodes not marked as mutex")
 

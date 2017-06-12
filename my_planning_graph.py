@@ -326,6 +326,10 @@ class PlanningGraph():
             if not meet_precond :
                 continue
             # get here mean all precondition is met
+            # now add parent node to parent
+            for s_node in s_level:
+                if s_node in pg_node_a.prenodes:
+                    pg_node_a.parents.add(s_node)
             level_action.add(pg_node_a)
         if (len(self.a_levels) <= level):
             self.a_levels.append(level_action)
@@ -461,13 +465,13 @@ class PlanningGraph():
         :return: bool
         """
         # TODO test for Interference between nodes
-        a1_eff_add = node_a1.action.effect_add
         a1_eff_rem = node_a1.action.effect_rem
+        a1_eff_add = node_a1.action.effect_add
         a1_precond_pos = node_a1.action.precond_pos
         a1_precond_neg = node_a1.action.precond_neg
 
-        a2_eff_add = node_a2.action.effect_add
         a2_eff_rem = node_a2.action.effect_rem
+        a2_eff_add = node_a2.action.effect_add
         a2_precond_pos = node_a2.action.precond_pos
         a2_precond_neg = node_a2.action.precond_neg
 
@@ -479,6 +483,15 @@ class PlanningGraph():
         for a1_pre_pos in a1_precond_pos:
             if a1_pre_pos in a2_eff_rem:
                 return True
+
+        for a1_pre_neg in a1_precond_neg:
+            if a1_pre_neg in a2_eff_add:
+                return True
+
+        for a2_pre_neg in a2_precond_neg:
+            if a2_pre_neg in a1_eff_add:
+                return True
+
         return False
 
     def competing_needs_mutex(self, node_a1: PgNode_a, node_a2: PgNode_a) -> bool:
@@ -493,6 +506,29 @@ class PlanningGraph():
         """
 
         # TODO test for Competing Needs between nodes
+        #print("Check competing mutex")
+        a1_precond_pos = node_a1.action.precond_pos
+        a1_precond_neg = node_a1.action.precond_neg
+        a2_precond_pos = node_a2.action.precond_pos
+        a2_precond_neg = node_a2.action.precond_neg
+
+        # print("a1 precond_pos",a1_precond_pos)
+        # print("a1_precond_neg",a1_precond_neg)
+        # print("a2_precond_pos",a2_precond_pos)
+        # print("a2_precond_neg",a2_precond_neg)
+        # check if a1 precond positive is competing with a2  precond negative
+        for a1_pos in a1_precond_pos:
+            if a1_pos in a2_precond_neg:
+                return True
+        # check if a2 precond positive is competing with a1 precond negative
+        for a2_pos in a1_precond_pos:
+            if a2_pos in a1_precond_neg:
+                return True
+        # check if parent also compete for mutex
+        for a2_parent in node_a2.parents:
+            for a1_parent in node_a1.parents:
+                if a2_parent.is_mutex(a1_parent):
+                    return True
         return False
 
     def update_s_mutex(self, nodeset: set):
