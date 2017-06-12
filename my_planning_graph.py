@@ -527,9 +527,9 @@ class PlanningGraph():
         # check if parent also compete for mutex
         for a2_parent in node_a2.parents:
             for a1_parent in node_a1.parents:
-                if a2_parent.is_mutex(a1_parent):
-                    return True
-        return False
+                if not a2_parent.is_mutex(a1_parent):
+                    return False
+        return True
 
     def update_s_mutex(self, nodeset: set):
         """ Determine and update sibling mutual exclusion for S-level nodes
@@ -564,6 +564,9 @@ class PlanningGraph():
         :return: bool
         """
         # TODO test for negation between nodes
+        if (node_s1.symbol == node_s2.symbol) \
+            and (node_s1.is_pos != node_s2.is_pos  ):
+                return True;
         return False
 
     def inconsistent_support_mutex(self, node_s1: PgNode_s, node_s2: PgNode_s):
@@ -583,7 +586,14 @@ class PlanningGraph():
         :return: bool
         """
         # TODO test for Inconsistent Support between nodes
-        return False
+        # check if all parents are mutually exclusive
+        for parent_1 in node_s1.parents:
+            for parent_2 in node_s2.parents:
+                # if there is a way for them to coexist
+                if not parent_1.is_mutex(parent_2):
+                    return False
+        # otherwise they are mutex
+        return True
 
     def h_levelsum(self) -> int:
         """The sum of the level costs of the individual goals (admissible if goals independent)
