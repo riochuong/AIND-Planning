@@ -430,6 +430,20 @@ class PlanningGraph():
         :return: bool
         """
         # TODO test for Inconsistent Effects between nodes
+        a1_eff_add = node_a1.action.effect_add
+        a1_eff_rem = node_a1.action.effect_rem
+        a2_eff_add = node_a2.action.effect_add
+        a2_eff_rem = node_a2.action.effect_rem
+
+        # check if a1 negate by a2
+        for a1_add in a1_eff_add:
+            if a1_add in a2_eff_rem:
+                return True
+
+        #check if a2 negate by a1
+        for a2_add in a2_eff_add:
+            if a2_add in a1_eff_rem:
+                return True
         return False
 
     def interference_mutex(self, node_a1: PgNode_a, node_a2: PgNode_a) -> bool:
@@ -447,6 +461,24 @@ class PlanningGraph():
         :return: bool
         """
         # TODO test for Interference between nodes
+        a1_eff_add = node_a1.action.effect_add
+        a1_eff_rem = node_a1.action.effect_rem
+        a1_precond_pos = node_a1.action.precond_pos
+        a1_precond_neg = node_a1.action.precond_neg
+
+        a2_eff_add = node_a2.action.effect_add
+        a2_eff_rem = node_a2.action.effect_rem
+        a2_precond_pos = node_a2.action.precond_pos
+        a2_precond_neg = node_a2.action.precond_neg
+
+        # check if a1_eff negate a2_precond
+        for a2_pre_pos in a2_precond_pos:
+            if a2_pre_pos in a1_eff_rem:
+                return True
+        # check if a2_eff negate a1_precond
+        for a1_pre_pos in a1_precond_pos:
+            if a1_pre_pos in a2_eff_rem:
+                return True
         return False
 
     def competing_needs_mutex(self, node_a1: PgNode_a, node_a2: PgNode_a) -> bool:
