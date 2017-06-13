@@ -265,7 +265,7 @@ class PlanningGraph():
         :return:
             builds the graph by filling s_levels[] and a_levels[] lists with node sets for each level
         """
-        print("start creating graph")
+        #print("start creating graph")
         # the graph should only be built during class construction
         if (len(self.s_levels) != 0) or (len(self.a_levels) != 0):
             raise Exception(
@@ -335,7 +335,7 @@ class PlanningGraph():
             self.a_levels.append(level_action)
         else:
             self.a_levels[level] = level_action
-        print("len action at level ",level," is ", len(level_action))
+        #print("len action at level ",level," is ", len(level_action))
 
 
 
@@ -373,7 +373,7 @@ class PlanningGraph():
             self.s_levels.append(literal_level)
         else:
             self.s_levels[level] = literal_level
-        print("literal level ",level," has len ",len(literal_level))
+        #print("literal level ",level," has len ",len(literal_level))
 
 
 
